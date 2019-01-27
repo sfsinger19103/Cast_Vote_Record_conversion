@@ -50,7 +50,6 @@ party =  []
 
 for choice in choices:
     cc = choice.split(":")
-    print cc
     contest.append(cc[1]+' (Vote For=')
     rule.append(cc[2][-1:]+')')
     cand.append(cc[3])
@@ -99,9 +98,9 @@ out_f.close()
 ### hash the output file and store the filename, hash and timestamp 
 
 try:
-    hash_file = open('hash_file.txt','x') 
+    hash_file = open('hashes.txt','x')
 except Exception:
-    hash_file = open('hash_file.txt','a')
+    hash_file = open('hashes.txt','a')
 
 BLOCKSIZE = 65536
 hasher = hashlib.sha256()

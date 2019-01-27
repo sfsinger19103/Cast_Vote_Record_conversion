@@ -95,7 +95,6 @@ def start_dom_file(input_dir,file_list,election_info,header_line,out_file):
     row_length = 6  # initialized to match 6 columns of ballot info in Dominion format
     for i in range(len(contests_no_dupe)):
         if contests_no_dupe[i] != '':
-            print 'For ',contests_no_dupe[i_contest],'choices are: ' 
             current_contest = contests_no_dupe[i]
             choices = []
             i_contest = i
@@ -109,8 +108,6 @@ def start_dom_file(input_dir,file_list,election_info,header_line,out_file):
                         choices.append(row[i+3])
                     row_length = row_length +  len(choices)
         choices_by_contest[contests_no_dupe[i_contest]] = choices
-        if 0 == i - i_contest - rule_by_contest[contests_no_dupe[i_contest]] +1:
-            print choices
     dom_row_two = ['']*6
     dom_row_three = ['']*6
     dom_row_four =  ['CvrNumber','TabulatorNum','BatchId','RecordId','ImprintedId','BallotType']
@@ -169,9 +166,9 @@ def write_ess_data(input_dir,file_list,dom_row_two,dom_row_three,contests_no_dup
 
 def hash(input_dir,file_name):
     try:
-        hash_file = open(os.path.join(input_dir,'hash_file.txt'),'x') 
+        hash_file = open(os.path.join(input_dir,'hashes.txt'),'x')
     except Exception:
-        hash_file = open(os.path.join(input_dir,'hash_file.txt'),'a')
+        hash_file = open(os.path.join(input_dir,'hashes.txt'),'a')
 
         BLOCKSIZE = 65536
         hasher = hashlib.sha256()
@@ -195,7 +192,7 @@ if __name__ == "__main__":
               header_line = check_headers(input_dir,file_list)
               if header_line == 'Header lines didn\'t match':
                   sys.exit()
-              out_file = 'dominion.output'
+              out_file = 'RLA.input'
               [dom_row_two,dom_row_three,contests_no_dupe] = start_dom_file(input_dir,file_list,election_info,header_line,out_file)
               write_ess_data(input_dir,file_list,dom_row_two,dom_row_three,contests_no_dupe,out_file)
               hash(input_dir,out_file)
