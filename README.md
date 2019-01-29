@@ -1,4 +1,6 @@
 # CVR_reformating
+Thanks to [Verified Voting](https://www.verifiedvoting.org/) for supporting this project.
+
 Python scripts to reformat Cast Vote Record files are in the "scripts" folder.
 
 There are two: 
