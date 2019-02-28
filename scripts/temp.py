@@ -13,21 +13,12 @@ import sys
 
 
 print('Run this from the directory where your file (filename.csv) resides. UsageFrom the command line:\n python clearballot_to_dominion.py filename.csv\nBeware of commas, quotes and apostrophes inside fields in filename.csv! If they weren\'t all removed you might have trouble.')
+def write_cb_data(infile,outfile,election_info):
+    with open(infile,'r') as f:
+        with open(outfile,'w') as out_f:
 
-infile = sys.argv[1]
-outfile='RLAtool_'+infile
-election_info = 'Data from '+infile
-
-f = open(infile,'r')
-out_f = open(outfile,'w')
-
-
-
-
-
-### prepare second line
-lines = f.readlines()
-
+### prepare second output line
+            lines = f.readlines()
 
 # first need to parse the choices into contest, choice, party.
 

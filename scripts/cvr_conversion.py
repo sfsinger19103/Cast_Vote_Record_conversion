@@ -2,7 +2,7 @@
 """ Take directory containing ES&S CSV exports and munge them
 into a format that Free & Fair's Colorado RLA can accept (Dominion format 
 from Colorado 2017). Requires that no quotes, apostrophes or commas are in the csv fields.
-
+MIT License (https://opensource.org/licenses/MIT)
 """
 import numpy as np
 import hashlib
@@ -10,8 +10,7 @@ import time
 import os
 import sys
 from sets import Set
-
-
+from optparse import OptionParser
 
 
 def list_csv_files(input_dir):
@@ -72,7 +71,7 @@ def make_dictionaries(input_dir,file_list):
     
 
 
-def start_dom_file(input_dir,file_list,election_info,header_line,out_file):
+def start_ess_dom_file(input_dir,file_list,election_info,header_line,out_file):
     headers = ((header_line.rstrip()).replace('$','')).split(",")
     ballot_info = headers[:3]
     ### note: headers contain some blanks, indicating vote for more than one
@@ -138,10 +137,9 @@ def start_dom_file(input_dir,file_list,election_info,header_line,out_file):
     return(dom_row_two,dom_row_three,contests_no_dupe)
 
 def write_ess_data(input_dir,file_list,dom_row_two,dom_row_three,contests_no_dupe,out_file):
-    print 'Starting to write data'
     with open(os.path.join(input_dir,out_file),'a') as out_f: # 'a' for append
         for file_name in file_list:
-            print 'Processing '+file_name
+            print 'Starting to process '+file_name+' ',time.ctime(time.time())
             with open(os.path.join(input_dir,file_name),'rU') as data_f:
                 next(data_f) #skip header row
                 for row in data_f:
@@ -184,17 +182,44 @@ def hash(input_dir,file_name):
 
 
 if __name__ == "__main__":
-              print 'Beware of commas and quote marks inside fields! If they weren\'t all removed you might have trouble. Also beware of spaces in ballot identification fields (e.g., precinct name)'
-              input_dir = sys.argv[1]
-              election_info='testing_RI'
-              file_list=list_csv_files(input_dir)
-              print 'output of list_csv_files(',input_dir,') is:\n',file_list
-              header_line = check_headers(input_dir,file_list)
-              if header_line == 'Header lines didn\'t match':
-                  sys.exit()
-              out_file = 'RLA.input'
-              [dom_row_two,dom_row_three,contests_no_dupe] = start_dom_file(input_dir,file_list,election_info,header_line,out_file)
-              write_ess_data(input_dir,file_list,dom_row_two,dom_row_three,contests_no_dupe,out_file)
-              hash(input_dir,out_file)
+    informats = ["ess","clearballot"]
+    outformats = ["dominion"]
+    
+    # parse input arguments, error check formats
+    parser = OptionParser()
+    parser.add_option("-i","--input_format", dest="input_cvr_format",help="use the specified input format, must be one of the following: "+ ",".join(informats))
+    parser.add_option("-o","--output_format", dest="output_cvr_format",help="use the specified output format, must be one of the following: "+ ",".join(outformats))
+    parser.add_option("-f", "--file", dest="filename",
+                      help="write report to FILE", metavar="FILE")
+    parser.add_option("-q", "--quiet",
+                      action="store_false", dest="verbose", default=True,
+                      help="don't print status messages to stdout")
+    (options,args) = parser.parse_args()
+    icf = options.input_cvr_format
+    if icf not in informats:
+        print '"'+icf+'" is not an allowed input format. Must be one of the following: '+",".join(informats)
+        sys.exit()
+    ocf = options.output_cvr_format
+    if ocf not in outformats:
+        print '"'+ocf+'" is not an allowed output format. Must be one of the following: '+",".join(outformats)
+        sys.exit()
 
+    # process files
+    input_dir = args[0]
+    print 'Cast Vote Record input files will be all .csv files in '+input_dir+ 'must have .csv extention be in '+icf+' format.'
+    print 'Beware of commas and quote marks inside fields! If they weren\'t all removed you might have trouble. Also beware of spaces in ballot identification fields (e.g., precinct name)'
+    election_info='testing_RI'
+    file_list=list_csv_files(input_dir)
+    print 'output of list_csv_files(',input_dir,') is:\n',file_list
+    header_line = check_headers(input_dir,file_list)
+    if header_line == 'Header lines didn\'t match':
+        sys.exit()
+    out_file = 'FreeFairRLAtool.input'
+    if icf == 'ess':
+        [dom_row_two,dom_row_three,contests_no_dupe] = start_ess_dom_file(input_dir,file_list,election_info,header_line,out_file)
+        write_ess_data(input_dir,
+                   file_list,dom_row_two,dom_row_three,contests_no_dupe,out_file)
+    elif icf == 'clearballot':
+        print 'Sorry, this program doesn\'t handle clearballot yet.'
 
+    hash(input_dir,out_file)
