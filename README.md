@@ -1,9 +1,9 @@
-# CVR_reformating
+# CVR_conversion
 Thanks to [Verified Voting](https://www.verifiedvoting.org/) for supporting this project.
 
 Python scripts to reformat Cast Vote Record files are in the "scripts" folder.
 
-There are two: 
+ 
 - **clearballot_to_coloradoRLA.py** takes as input a single CVR export file from ClearBallot system (v1.4.3). For example, from the folder containing ```clearballot_sample_CVR.csv``` running
 ```python clearballot_to_coloradoRLA.py clearballot_sample_CVR.csv```
 creates  (in the current folder) the file
