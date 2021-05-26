@@ -10,9 +10,8 @@ This routine creates a file for a single contest with vote totals by batch and c
      * columns for the join (default is "Cast Vote Record" for both files)
      * column with batch name (default is "Batch")
 
-Python scripts to reformat Cast Vote Record files are in the "scripts" folder.
-
-# clearballot module
+# scripts folder
+## clearballot_to_coloradoRLA.py
 - **clearballot_to_coloradoRLA.py** takes as input a single CVR export file from ClearBallot system (v1.4.3). For example, from the folder containing ```clearballot_sample_CVR.csv``` running
 ```python clearballot_to_coloradoRLA.py clearballot_sample_CVR.csv```
 creates  (in the current folder) the file
